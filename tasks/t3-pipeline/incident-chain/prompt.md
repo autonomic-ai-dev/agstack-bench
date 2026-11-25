@@ -1,0 +1,1 @@
+srv/ is crash-looping in production and users are affected. Handle it end to end: stabilize it, work out why it broke, fix it properly, and leave the incident record the next person will need. Any verification artifacts go under .verify/artifacts/.

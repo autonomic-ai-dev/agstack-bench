@@ -1,0 +1,1 @@
+The worker in app/worker.sh must read the JOBS_FILE environment variable, but ops reports it always reads /tmp/default_jobs.txt regardless. Make worker.sh honor JOBS_FILE when set. The test in test/worker_test.sh must still pass.

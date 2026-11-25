@@ -1,0 +1,4 @@
+tier = 2
+difficulty = "low"
+generated = false
+playbooks = ["bug-fix"]

@@ -1,0 +1,5 @@
+tier = 3
+difficulty = "medium"
+generated = false
+playbooks = ["incident", "bug-fix", "postmortem"]
+chain = "incident -> bug-fix -> postmortem"
