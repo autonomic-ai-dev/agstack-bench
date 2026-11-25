@@ -17,10 +17,16 @@ else
   SRC="$TMP/repo"
 fi
 
+MAX_FILES="${MAX_FILES:-8}"
+MAX_LINES="${MAX_LINES:-400}"
+
 found=0
-for sha in $(git -C "$SRC" log --format=%H -"$MAX" -E --grep="$GREP" -i); do
-  git -C "$SRC" diff --name-only "$sha^" "$sha" 2>/dev/null | grep -qE '(test|spec|__tests__|_test)' || continue
-  git -C "$SRC" diff --name-only "$sha^" "$sha" | grep -vqE '(test|spec|__tests__|_test)' || continue
+for sha in $(git -C "$SRC" log --format=%H --no-merges -"$MAX" -E --grep="$GREP" -i); do
+  files=$(git -C "$SRC" diff --name-only "$sha^" "$sha" 2>/dev/null)
+  echo "$files" | grep -qE '(test|spec|__tests__|_test)' || continue
+  echo "$files" | grep -vqE '(test|spec|__tests__|_test)' || continue
+  [ "$(echo "$files" | grep -c .)" -le "$MAX_FILES" ] || continue
+  [ "$(git -C "$SRC" diff --numstat "$sha^" "$sha" | awk '{s+=$1+$2} END{print s}')" -le "$MAX_LINES" ] || continue
   name="$(basename "$REPO" .git)-$(printf '%s' "$sha" | cut -c1-8)"
   out="$ROOT/eval/generated/revert-$name"
   if sh "$ROOT/generators/revert.sh" "$SRC" "$sha" "$TESTCMD" "$out" >/dev/null 2>&1; then
