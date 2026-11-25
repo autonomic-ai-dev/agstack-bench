@@ -48,7 +48,7 @@ set +e
 claude -p "$PROMPT" \
   --setting-sources project \
   --permission-mode acceptEdits \
-  --allowedTools "Skill" "Read" "Edit" "Write" "Grep" "Glob" "TodoWrite" "Bash(sh:*)" "Bash(bash:*)" "Bash(git:*)" "Bash(ls:*)" "Bash(cat:*)" "Bash(grep:*)" "Bash(printf:*)" "Bash(echo:*)" "Bash(find:*)" "Bash(mkdir:*)" "Bash(cp:*)" "Bash(awk:*)" "Bash(sed:*)" "Bash(od:*)" "Bash(mktemp:*)" "Bash(cd:*)" "Bash(head:*)" "Bash(tail:*)" "Bash(wc:*)" "Bash(tr:*)" "Bash(sort:*)" "Bash(diff:*)" "Bash(touch:*)" "Bash(test:*)" "Bash(.:*)" \
+  --allowedTools "Skill" "Read" "Edit" "Write" "Grep" "Glob" "TodoWrite" "TaskCreate" "TaskUpdate" "TaskList" "Bash(sh:*)" "Bash(bash:*)" "Bash(git:*)" "Bash(ls:*)" "Bash(cat:*)" "Bash(grep:*)" "Bash(printf:*)" "Bash(echo:*)" "Bash(find:*)" "Bash(mkdir:*)" "Bash(cp:*)" "Bash(awk:*)" "Bash(sed:*)" "Bash(od:*)" "Bash(mktemp:*)" "Bash(cd:*)" "Bash(head:*)" "Bash(tail:*)" "Bash(wc:*)" "Bash(tr:*)" "Bash(sort:*)" "Bash(diff:*)" "Bash(touch:*)" "Bash(test:*)" "Bash(.:*)" \
   --output-format stream-json --verbose \
   --max-budget-usd 2.00 \
   --no-session-persistence > claude.jsonl 2> claude.err
@@ -63,7 +63,10 @@ DENIALS="$(jq -r '.permission_denials | length' claude.json)"
 
 git add -A
 ADDED_COMMENTS="$(git diff --cached HEAD -- lib bin srv app src retrylib 2>/dev/null | grep -cE '^\+[[:space:]]*(#[^!]|//)' || true)"
-TESTS_CHANGED="$(git diff --cached --name-only --diff-filter=MD HEAD -- test tests | wc -l | tr -d ' ')"
+TESTS_CHANGED=0
+for f in $(git diff --cached --name-only --diff-filter=MD HEAD -- test tests); do
+  if git diff --cached HEAD -- "$f" | grep -q '^-[^-]'; then TESTS_CHANGED=$((TESTS_CHANGED + 1)); fi
+done
 
 cp "$TASKDIR/hidden.sh" .grade_hidden.sh
 set +e

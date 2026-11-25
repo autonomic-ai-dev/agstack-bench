@@ -30,6 +30,7 @@ task=t3-pipeline/incident-chain
 if sh tasks/$task/fixture/srv/run.sh 5 >/dev/null 2>&1; then
   err "$task fixture is not crash-looping (broken fixture)"
 fi
+[ -s "tasks/$task/fixture/data/records.txt" ] || err "$task fixture missing data/records.txt (intended restore target)"
 
 task=t1-conformance/checklist-hydration
 if sh tasks/$task/fixture/test/util_test.sh >/dev/null 2>&1; then
