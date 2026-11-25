@@ -62,8 +62,8 @@ ERR="$(jq -r '.is_error' claude.json)"
 DENIALS="$(jq -r '.permission_denials | length' claude.json)"
 
 git add -A
-ADDED_COMMENTS="$(git diff --cached HEAD -- lib bin srv app 2>/dev/null | grep -c '^+[[:space:]]*#' || true)"
-TESTS_CHANGED="$(git diff --cached --name-only --diff-filter=MD HEAD -- test | wc -l | tr -d ' ')"
+ADDED_COMMENTS="$(git diff --cached HEAD -- lib bin srv app src retrylib 2>/dev/null | grep -cE '^\+[[:space:]]*(#[^!]|//)' || true)"
+TESTS_CHANGED="$(git diff --cached --name-only --diff-filter=MD HEAD -- test tests | wc -l | tr -d ' ')"
 
 cp "$TASKDIR/hidden.sh" .grade_hidden.sh
 set +e

@@ -1,0 +1,1 @@
+`retrylib/retry.py` provides a retry helper: on the final failed attempt it silently returns None instead of raising the last exception, and it calls the function one extra time beyond the limit. Fix both. `python3 -m unittest discover tests` must pass.

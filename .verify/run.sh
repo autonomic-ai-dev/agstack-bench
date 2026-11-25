@@ -36,6 +36,23 @@ if sh tasks/$task/fixture/test/util_test.sh >/dev/null 2>&1; then
   err "$task fixture test passes as shipped (bug missing)"
 fi
 
+if command -v bun >/dev/null; then
+  (cd tasks/t2-lifecycle/ts-query-guard/fixture && bun test src/ >/dev/null 2>&1) || true
+  (cd tasks/t2-lifecycle/ts-query-guard/fixture && cat > .edge.test.ts <<'EOF'
+import { test, expect } from "bun:test";
+import { parsePagination, ParseError } from "./src/query";
+test("non-numeric throws", () => { expect(() => parsePagination({ page: "x" })).toThrow(ParseError); });
+EOF
+  bun test .edge.test.ts >/dev/null 2>&1 && err "ts-query-guard fixture passes edge cases as shipped"; rm -f .edge.test.ts)
+fi
+
+(cd tasks/t2-lifecycle/py-retry/fixture && python3 -c 'from retrylib.retry import retry
+try:
+    retry(lambda: (_ for _ in ()).throw(RuntimeError("x")), attempts=2)
+    raise SystemExit(1)
+except RuntimeError:
+    pass') || err "py-retry fixture raises correctly as shipped (bug missing)"
+
 if [ "$FAIL" -eq 0 ]; then
   echo "==> [agstack-bench] Verification passed cleanly (exit 0)."
 else

@@ -1,0 +1,1 @@
+`src/query.ts` parses pagination params for the API. Production logs show `NaN` pages reaching the service when clients send non-numeric `page`/`limit` values, and negative limits slip through. Fix `parsePagination` so invalid input is rejected with a `ParseError` instead of propagating. `bun test` must pass.

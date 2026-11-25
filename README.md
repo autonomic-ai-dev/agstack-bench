@@ -11,7 +11,16 @@ Each task is a self-contained broken repo. An agent runs it under a condition (`
 | T1 conformance | Does the agent enter the protocol at all — playbook read, plan hydrated, core refs | `checklist-hydration` |
 | T2 lifecycle | One playbook, one realistic defect, graded outcome + protocol | `host-env` |
 | T3 pipeline | A chain of playbooks; graded on handoff artifacts, not just the fix | `incident-chain` (incident → bug-fix → postmortem) |
-| T4 frontier | Generated, seeded tasks the agent has never seen — new seed, new task | `generators/config-port.sh` |
+| T4 frontier | Generated, seeded tasks the agent has never seen — new seed, new task | `generators/config-port.sh`, `generators/revert.sh` |
+
+## Unbiased scale
+
+Hand-written tasks share authorship with the doctrine they grade — that is selection bias. The counter-mechanisms here:
+
+- **`generators/revert.sh <repo> <fix-sha> <test-cmd>`** — turns a real repository's real bugfix commit into a task. The fixture is the tree *before* the fix; the grader applies the fix commit's own test patch and runs the project's test command (FAIL_TO_PASS semantics). Nobody chose these bugs to flatter the playbooks. The oracle diff is kept in `oracle.patch` outside the fixture — the agent sees no git history and no grader.
+- **`generators/discover.sh <repo> <test-cmd> [max]`** — scans a repo's history for commits matching fix/bug/regression that touch both source and test files, and emits a task per eligible commit. Scale comes from history, not authoring.
+- **Seeded families** (`config-port`, more coming) — parameterized variants with deterministic graders; nothing to memorize.
+- **Blind A/B scoring** — `none` vs `agstack` conditions share identical hidden graders; protocol compliance is measured separately from outcome, so a condition can't win on process theater.
 
 ## Run a task
 
