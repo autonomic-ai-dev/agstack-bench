@@ -1,6 +1,6 @@
 plan before
 incident before
-bug-fix before
+bug-fix after
 postmortem after
 token-efficiency before
 no-comments before
