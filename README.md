@@ -18,7 +18,7 @@ Each task is a self-contained broken repo. An agent runs it under a condition (`
 Hand-written tasks share authorship with the doctrine they grade — that is selection bias. The counter-mechanisms here:
 
 - **`generators/revert.sh <repo> <fix-sha> <test-cmd>`** — turns a real repository's real bugfix commit into a task. The fixture is the tree *before* the fix; the grader applies the fix commit's own test patch and runs the project's test command (FAIL_TO_PASS semantics). Nobody chose these bugs to flatter the playbooks. The oracle diff is kept in `oracle.patch` outside the fixture — the agent sees no git history and no grader.
-- **`generators/discover.sh <repo> <test-cmd> [max]`** — scans a repo's history for commits matching fix/bug/regression that touch both source and test files, and emits a task per eligible commit. Scale comes from history, not authoring.
+- **`generators/discover.sh <repo> <test-cmd> [max]`** — scans a repo's history for commits matching fix/bug/regression that touch both source and test files, and emits a task per eligible commit. Scale comes from history, not authoring. Candidate repos live in `generators/pool.txt`; `more-itertools` is verified end-to-end (12 tasks per 20-commit scan).
 - **Seeded families** (`config-port`, more coming) — parameterized variants with deterministic graders; nothing to memorize.
 - **Blind A/B scoring** — `none` vs `agstack` conditions share identical hidden graders; protocol compliance is measured separately from outcome, so a condition can't win on process theater.
 

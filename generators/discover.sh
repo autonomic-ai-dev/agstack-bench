@@ -18,7 +18,7 @@ else
 fi
 
 found=0
-for sha in $(git -C "$SRC" log --format=%H -"$MAX" --grep="$GREP" -i); do
+for sha in $(git -C "$SRC" log --format=%H -"$MAX" -E --grep="$GREP" -i); do
   git -C "$SRC" diff --name-only "$sha^" "$sha" 2>/dev/null | grep -qE '(test|spec|__tests__|_test)' || continue
   git -C "$SRC" diff --name-only "$sha^" "$sha" | grep -vqE '(test|spec|__tests__|_test)' || continue
   name="$(basename "$REPO" .git)-$(printf '%s' "$sha" | cut -c1-8)"

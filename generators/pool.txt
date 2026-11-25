@@ -1,7 +1,7 @@
 # Repo pool for generators/discover.sh — one repo per line: <clone-url-or-path> <test-cmd>
-# test-cmd must run inside the fixture checkout with no install step, or document the setup in meta.
+# test-cmd must run inside the fixture checkout with no install step.
 # Prefer small repos whose fix commits carry their own test changes (FAIL_TO_PASS property).
 #
-# Examples (verify eligibility before relying on them):
+# Verified (end-to-end: buggy fixture fails, oracle src patch passes):
 # https://github.com/more-itertools/more-itertools.git  python3 -m unittest discover tests
-# <local-repo-path>                                     bun test
+#   -> 12 tasks from 20 commits scanned (merge commits usable via first-parent diff)
