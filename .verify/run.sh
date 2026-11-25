@@ -15,7 +15,7 @@ for t in tasks/*/*/; do
   grep -vE '^[a-z-]+ (before|after)$' "$t/playbook" | grep -q . && err "$t/playbook has malformed spec lines"
 done
 
-for g in generators/*.sh; do
+for g in generators/families/*.sh; do
   fam="$(basename "$g" .sh)"
   tmp="$(mktemp -d)"
   sh "$g" 1 "$tmp/task" || err "generator $fam failed on seed 1"
@@ -47,11 +47,8 @@ EOF
 fi
 
 (cd tasks/t2-lifecycle/py-retry/fixture && python3 -c 'from retrylib.retry import retry
-try:
-    retry(lambda: (_ for _ in ()).throw(RuntimeError("x")), attempts=2)
-    raise SystemExit(1)
-except RuntimeError:
-    pass') || err "py-retry fixture raises correctly as shipped (bug missing)"
+r = retry(lambda: (_ for _ in ()).throw(RuntimeError("x")), attempts=2)
+raise SystemExit(0 if r is None else 1)') || err "py-retry fixture bug missing (retry already raises)"
 
 if [ "$FAIL" -eq 0 ]; then
   echo "==> [agstack-bench] Verification passed cleanly (exit 0)."
