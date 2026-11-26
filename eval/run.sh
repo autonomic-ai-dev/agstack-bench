@@ -64,8 +64,18 @@ DENIALS="$(jq -r '.permission_denials | length' claude.json)"
 git add -A
 ADDED_COMMENTS="$(git diff --cached HEAD -- lib bin srv app src retrylib 2>/dev/null | grep -cE '^\+[[:space:]]*(#[^!]|//)' || true)"
 TESTS_CHANGED=0
+ORACLE_DELS=""
+if [ -f "$TASKDIR/oracle.patch" ]; then
+  ORACLE_DELS="$(grep '^-' "$TASKDIR/oracle.patch" | grep -v '^---' | sort -u)"
+fi
 for f in $(git diff --cached --name-only --diff-filter=MD HEAD -- test tests); do
-  if git diff --cached HEAD -- "$f" | grep -q '^-[^-]'; then TESTS_CHANGED=$((TESTS_CHANGED + 1)); fi
+  dels="$(git diff --cached HEAD -- "$f" | grep '^-[^-]' | sort -u)"
+  if [ -n "$ORACLE_DELS" ]; then
+    bad="$(comm -23 <(printf '%s\n' "$dels") <(printf '%s\n' "$ORACLE_DELS") | grep . || true)"
+    [ -n "$bad" ] && TESTS_CHANGED=$((TESTS_CHANGED + 1))
+  else
+    [ -n "$dels" ] && TESTS_CHANGED=$((TESTS_CHANGED + 1))
+  fi
 done
 
 cp "$TASKDIR/hidden.sh" .grade_hidden.sh
