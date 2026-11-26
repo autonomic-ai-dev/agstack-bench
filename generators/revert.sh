@@ -44,6 +44,7 @@ EOF
 cat "$OUT/test.patch"
 cat <<EOF
 PATCHEOF
+for p in $(grep '^+++' .test.patch | awk '{print $2}' | sed 's|^b/||'); do git checkout HEAD -- "$p" 2>/dev/null || rm -f "$p"; done
 git apply --check .test.patch >/dev/null 2>&1 && git apply .test.patch || { echo "FAIL: test patch does not apply"; exit 1; }
 sh -c '$TESTCMD' >/dev/null 2>&1 || { echo "FAIL: $TESTCMD"; exit 1; }
 exit 0
