@@ -48,7 +48,7 @@ set +e
 claude -p "$PROMPT" \
   --setting-sources project \
   --permission-mode acceptEdits \
-  --allowedTools "Skill" "Read" "Edit" "Write" "Grep" "Glob" "TodoWrite" "TaskCreate" "TaskUpdate" "TaskList" "Bash(sh:*)" "Bash(bash:*)" "Bash(git:*)" "Bash(ls:*)" "Bash(cat:*)" "Bash(grep:*)" "Bash(printf:*)" "Bash(echo:*)" "Bash(find:*)" "Bash(mkdir:*)" "Bash(cp:*)" "Bash(awk:*)" "Bash(sed:*)" "Bash(od:*)" "Bash(mktemp:*)" "Bash(cd:*)" "Bash(head:*)" "Bash(tail:*)" "Bash(wc:*)" "Bash(tr:*)" "Bash(sort:*)" "Bash(diff:*)" "Bash(touch:*)" "Bash(test:*)" "Bash(.:*)" \
+  --allowedTools "Skill" "Read" "Edit" "Write" "Grep" "Glob" "TodoWrite" "TaskCreate" "TaskUpdate" "TaskList" "Bash(sh:*)" "Bash(bash:*)" "Bash(git:*)" "Bash(ls:*)" "Bash(cat:*)" "Bash(grep:*)" "Bash(printf:*)" "Bash(echo:*)" "Bash(find:*)" "Bash(mkdir:*)" "Bash(cp:*)" "Bash(awk:*)" "Bash(sed:*)" "Bash(od:*)" "Bash(mktemp:*)" "Bash(cd:*)" "Bash(head:*)" "Bash(tail:*)" "Bash(wc:*)" "Bash(tr:*)" "Bash(sort:*)" "Bash(diff:*)" "Bash(touch:*)" "Bash(test:*)" "Bash(.:*)" "Bash(python3:*)" "Bash(python:*)" "Bash(pytest:*)" "Bash(node:*)" "Bash(npm:*)" "Bash(npx:*)" "Bash(bun:*)" "Bash(go:*)" "Bash(cargo:*)" "Bash(make:*)" "Bash(env:*)" "Bash(chmod:*)" "Bash(mv:*)" "Bash(rm:*)" \
   --output-format stream-json --verbose \
   --max-budget-usd 2.00 \
   --no-session-persistence > claude.jsonl 2> claude.err
