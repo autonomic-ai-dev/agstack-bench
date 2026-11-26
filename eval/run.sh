@@ -71,7 +71,11 @@ fi
 for f in $(git diff --cached --name-only --diff-filter=MD HEAD -- test tests); do
   dels="$(git diff --cached HEAD -- "$f" | grep '^-[^-]' | sort -u)"
   if [ -n "$ORACLE_DELS" ]; then
-    bad="$(comm -23 <(printf '%s\n' "$dels") <(printf '%s\n' "$ORACLE_DELS") | grep . || true)"
+    ta=$(mktemp); tb=$(mktemp)
+    printf '%s\n' "$dels" | sort -u > "$ta"
+    printf '%s\n' "$ORACLE_DELS" | sort -u > "$tb"
+    bad="$(comm -23 "$ta" "$tb" | grep . || true)"
+    rm -f "$ta" "$tb"
     [ -n "$bad" ] && TESTS_CHANGED=$((TESTS_CHANGED + 1))
   else
     [ -n "$dels" ] && TESTS_CHANGED=$((TESTS_CHANGED + 1))
