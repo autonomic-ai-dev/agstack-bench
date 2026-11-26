@@ -8,8 +8,9 @@ ls .verify/artifacts/incident-*/NOTE.md >/dev/null 2>&1 || fail "no incident evi
 grep -q 'DATA_FILE' .verify/artifacts/incident-*/NOTE.md || fail "NOTE.md missing the root cause (DATA_FILE)"
 
 git status --porcelain -- test/ tests/ | grep -q '^??' || \
-  grep -rlqE 'run\.sh|serving|app\.env|curl' .verify/regression/ .verify/tests/ 2>/dev/null || \
-  fail "no regression test found (new file under test/ or a runnable check under .verify/regression|tests/)"
+  git status --porcelain -- .verify/ | grep '^??' | grep -v 'artifacts/' | awk '{print $2}' | \
+  xargs grep -lqE 'run\.sh|serving|app\.env|curl' 2>/dev/null || \
+  fail "no regression test found (new file under test/ or a runnable check under .verify/)"
 
 grep -rliE 'root cause|action item|timeline' .verify/artifacts/ docs/ 2>/dev/null | grep -v 'incident-.*/NOTE.md' | grep -q . || fail "no postmortem/writeup artifact found"
 
